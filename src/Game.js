@@ -77,12 +77,18 @@ class Game {
     setInterval(() => {
       this.regenerateTrack();
       this.view.render(this);
-      //console.log(this.hero.y);
-      //this.check();
     }, 100);
   }
 
   check() {
+    if (this.boomerang.x > 0) {
+      if (this.boomerang.x == this.enemy.enemyPosition || this.boomerang.x == this.enemy.enemyPosition - 1) {
+        ++this.shore;
+        this.enemy.enemyKill();
+        this.enemy = new Enemy();
+        this.enemy.enemyGo();
+      }
+    }
     if (this.hero.heroPosition === this.enemy.enemyPosition) {
       this.gameOver();
     }
