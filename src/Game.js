@@ -8,11 +8,12 @@ const View = require('./View');
 
 class Game {
   constructor(name = 'unknown') {
+    this.enemy = [];
     this.time = 0;
     this.shore = 0;
     this.name = name;
     this.hero = new Hero();
-    this.enemy = new Enemy();
+    this.enemy[this.shore] = new Enemy();
     this.boomerang = new Boomerang();
     this.view = new View();
     this.space = ' ';
@@ -29,20 +30,25 @@ class Game {
 
   regenerateTrack() {
     this.check();
-    if (this.enemy.x == 0) {
-      this.enemy.enemyKill();
-      this.enemy = new Enemy();
-      this.enemy.enemyGo();
-    }
+    this.enemy.forEach((enemy,i) => {
+      if (enemy.x == 0) {
+        this.enemy[i].enemyKill();
+        this.enemy[i] = new Enemy();
+        this.enemy[i].enemyGo();
+      }
+    });
+    
     this.track = (new Array(this.baseWidth * (this.baseHeight - 3))).fill(this.space);
     this.track[this.hero.heroPosition] = this.hero.face;
-    if (this.enemy.x > 0) this.track[this.enemy.enemyPosition] = this.enemy.face;
+    this.enemy.forEach((enemy,i) => {
+      if (enemy.x > 0) this.track[enemy.enemyPosition] = enemy.face;
+    });
     if (this.boomerang.x > 1) this.track[this.boomerang.x] = this.boomerang.face;
   }
 
   play() {
     this.startTimer();
-    this.enemy.enemyGo();
+    this.enemy[this.shore].enemyGo();
     keypress(process.stdin);
     process.stdin.setRawMode(true);
     process.stdin.on('keypress', (ch, key) => {
@@ -82,16 +88,21 @@ class Game {
 
   check() {
     if (this.boomerang.x > 0) {
-      if (this.boomerang.x == this.enemy.enemyPosition || this.boomerang.x == this.enemy.enemyPosition - 1) {
-        ++this.shore;
-        this.enemy.enemyKill();
-        this.enemy = new Enemy();
-        this.enemy.enemyGo();
-      }
+      this.enemy.forEach((enemy,i) => {
+        if (this.boomerang.x == enemy.enemyPosition || this.boomerang.x == enemy.enemyPosition - 1) {
+          ++this.shore;
+          this.enemy[i].enemyKill();
+          this.enemy[i] = new Enemy();
+          this.enemy[i].enemyGo();
+          this.enemy[this.shore] = new Enemy();
+          this.enemy[this.shore].enemyGo();
+        }
+      });
     }
-    if (this.hero.heroPosition === this.enemy.enemyPosition) {
-      this.gameOver();
-    }
+    this.enemy.forEach((enemy,i) => {
+      if (this.hero.heroPosition === enemy.enemyPosition) this.gameOver();
+    });
+    
   }
   gameOver() {
     this.hero.skin = '💀';
