@@ -5,6 +5,8 @@ const keypress = require('keypress');
 const cursor = require('cli-cursor');
 cursor.hide();
 const View = require('./View');
+const mongoose = require('mongoose');
+const User = require('./mongoose');
 
 class Game {
   constructor(name = 'unknown') {
@@ -30,17 +32,17 @@ class Game {
 
   regenerateTrack() {
     this.check();
-    this.enemy.forEach((enemy,i) => {
+    this.enemy.forEach((enemy, i) => {
       if (enemy.x == 0) {
         this.enemy[i].enemyKill();
         this.enemy[i] = new Enemy();
         this.enemy[i].enemyGo();
       }
     });
-    
+
     this.track = (new Array(this.baseWidth * (this.baseHeight - 3))).fill(this.space);
     this.track[this.hero.heroPosition] = this.hero.face;
-    this.enemy.forEach((enemy,i) => {
+    this.enemy.forEach((enemy, i) => {
       if (enemy.x > 0) this.track[enemy.enemyPosition] = enemy.face;
     });
     if (this.boomerang.x > 1) this.track[this.boomerang.x] = this.boomerang.face;
@@ -88,7 +90,7 @@ class Game {
 
   check() {
     if (this.boomerang.x > 0) {
-      this.enemy.forEach((enemy,i) => {
+      this.enemy.forEach((enemy, i) => {
         if (this.boomerang.x == enemy.enemyPosition || this.boomerang.x == enemy.enemyPosition - 1) {
           ++this.shore;
           this.enemy[i].enemyKill();
@@ -99,16 +101,35 @@ class Game {
         }
       });
     }
-    this.enemy.forEach((enemy,i) => {
+    this.enemy.forEach((enemy, i) => {
       if (this.hero.heroPosition === enemy.enemyPosition) this.gameOver();
     });
-    
+
   }
   gameOver() {
-    this.hero.skin = '💀';
-    console.log('💀 💀 💀 YOU ARE DEAD 💀 💀 💀');
-    console.log(`YOU KILLED ${this.shore} ENEMIES`);
-    process.exit();
+    new Promise(res => {
+      mongoose.connect('mongodb://localhost:27017/GameZena2020Shougan', {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      });
+      const newUser = new User({
+        name: this.name,
+        score: this.shore
+      });
+
+      newUser.save((err, data) => {
+        if (err) {
+          console.log(err);
+        }
+        res();
+        mongoose.connection.close();
+      });
+    }).then(() => {
+      this.hero.skin = '💀';
+      console.log('💀 💀 💀 YOU ARE DEAD 💀 💀 💀');
+      console.log(`YOU KILLED ${this.shore} ENEMIES`);
+      process.exit();
+    });
   }
 }
 

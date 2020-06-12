@@ -20,7 +20,7 @@ class Hero {
   moveDown() {
     this.y += 1;
   }
-  
+
 }
 
 module.exports = Hero;
