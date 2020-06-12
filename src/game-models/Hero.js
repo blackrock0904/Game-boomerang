@@ -21,12 +21,6 @@ class Hero {
     this.y += 1;
   }
   
-
-  die() {
-    this.skin = '💀';
-    console.log('YOU ARE DEAD!💀');
-    process.exit();
-  }
 }
 
 module.exports = Hero;

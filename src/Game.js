@@ -18,7 +18,6 @@ class Game {
     this.space = ' ';
     this.baseWidth = process.stdout.columns;
     this.baseHeight = process.stdout.rows;
-    //this.regenerateHeroPosition();
     this.regenerateTrack();
   }
 
@@ -27,12 +26,17 @@ class Game {
       this.time++
     }, 1000);
   }
-  
+
   regenerateTrack() {
+    this.check();
+    if (this.enemy.x == 0) {
+      this.enemy.enemyKill();
+      this.enemy = new Enemy();
+      this.enemy.enemyGo();
+    }
     this.track = (new Array(this.baseWidth * (this.baseHeight - 3))).fill(this.space);
-    //this.regenerateHeroPosition();
     this.track[this.hero.heroPosition] = this.hero.face;
-    this.track[this.enemy.x] = this.enemy.face;
+    if (this.enemy.x > 0) this.track[this.enemy.enemyPosition] = this.enemy.face;
     if (this.boomerang.x > 1) this.track[this.boomerang.x] = this.boomerang.face;
   }
 
@@ -64,7 +68,6 @@ class Game {
             clearInterval(this.boomerang.interval);
             this.boomerang.x = 0;
           }
-          //this.regenerateHeroPosition();
           this.boomerang.fly(this.hero.heroPosition);
           break;
       }
@@ -79,11 +82,16 @@ class Game {
     }, 100);
   }
 
-  // check() {
-  //   if (this.hero.position === this.enemy.position) {
-  //     this.hero.die();
-  //   }
-  // }
+  check() {
+    if (this.hero.heroPosition === this.enemy.enemyPosition) {
+      this.gameOver();
+    }
+  }
+  gameOver() {
+    this.hero.skin = '💀';
+    console.log('💀💀💀 YOU ARE DEAD 💀💀💀');
+    process.exit();
+  }
 }
 
 module.exports = Game;

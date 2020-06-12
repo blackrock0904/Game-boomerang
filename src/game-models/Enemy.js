@@ -2,7 +2,11 @@ class Enemy {
   constructor() {
     this.generateFace();
     this.x = process.stdout.columns - 1;
-    this.y = 0;
+    this.y = Math.floor(Math.random * process.stdout.rows);
+  }
+
+  get enemyPosition() {
+    return this.x + this.y * process.stdout.columns;
   }
 
   enemyGo() {
@@ -12,6 +16,7 @@ class Enemy {
   }
   enemyKill() {
     clearInterval(this.interval);
+    delete this;
   }
 
   generateFace() {
