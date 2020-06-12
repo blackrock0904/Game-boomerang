@@ -1,14 +1,13 @@
-// Сделаем отдельный класс для отображения игры в консоли.
+const {
+  formatDuration
+} = require('./parse_time');
 
 class View {
-  render() {
-    const yourTeamName = 'Elbrus';
-
-    // Тут всё рисуем.
+  render(game) {
     console.clear();
-    console.log(this.game.track.join(''));
-    console.log('\n\n');
-    console.log(`Created by "${yourTeamName}" with love`);
+    console.log(`TIME: ${formatDuration(game.time)} ${'SCORE:'.padStart(10,' ')} ${String(game.shore).padStart(3,'0')} ${'NAME:'.padStart(9,' ')} ${game.name}`);
+    console.log('_'.repeat(game.baseWidth));
+    console.log(game.track.join(''));
   }
 }
 
