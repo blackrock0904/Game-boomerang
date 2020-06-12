@@ -106,7 +106,8 @@ class Game {
   }
   gameOver() {
     this.hero.skin = '💀';
-    console.log('💀💀💀 YOU ARE DEAD 💀💀💀');
+    console.log('💀 💀 💀 YOU ARE DEAD 💀 💀 💀');
+    console.log(`YOU KILLED ${this.shore} ENEMIES`);
     process.exit();
   }
 }
