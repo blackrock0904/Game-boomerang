@@ -27,11 +27,6 @@ class Enemy {
     moveLeft() {
       this.x -= 1;
     }
-
-    // die() {
-    //   this.position = '?';
-    //   console.log('Enemy is dead!');
-    // }
   }
 
   module.exports = Enemy;
