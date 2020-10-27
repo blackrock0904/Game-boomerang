@@ -1,9 +1,14 @@
 # Boomerang!
+Консольная игра "Boomerang"
 
-## Введение
+Запуск - команда консоли "npm start"
+
+Используемые технологии:
+ - pure JS
+ - NODE JS
+ - MongoDB (Mongoose)
 
 
-
-<img src="readme-assets/mem.jpg" alt="drawing" width="500"/>
+<img src="intro.jpg" alt="drawing" width="500"/>
 
 
